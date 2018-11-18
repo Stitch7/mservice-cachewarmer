@@ -1,0 +1,20 @@
+---
+sudo: required
+language: objective-c
+
+# Reference for macOS Versions:
+# https://docs.travis-ci.com/user/reference/osx/#OS-X-Version
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode10.1
+
+before_install:
+  - brew update
+#  - brew upgrade swiftlint
+  - brew install vapor/tap/vapor
+
+script:
+  - swift build
+#  - swiftlint --strict
+  - swift test
