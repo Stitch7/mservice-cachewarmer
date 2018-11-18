@@ -1,0 +1,104 @@
+[
+    {
+        "closed": false,
+        "id": 1,
+        "lastMessage": "2018-11-17T19:39:00+01:00",
+        "mods": [
+            "Leviathan",
+            "Slapshot",
+            "us"
+        ],
+        "name": "Smalltalk",
+        "topic": "Diskussionen rund um die Welt der Videospiele."
+    },
+    {
+        "closed": false,
+        "id": 2,
+        "lastMessage": "2018-11-17T19:21:00+01:00",
+        "mods": [
+            "Leviathan",
+            "pzykoskinhead",
+            "Slapshot",
+            "us"
+        ],
+        "name": "For Sale",
+        "topic": "Private Kleinanzeigen: An- und Verkauf gebrauchter Spiele"
+    },
+    {
+        "closed": false,
+        "id": 4,
+        "lastMessage": "2018-11-17T17:32:00+01:00",
+        "mods": [
+            "Leviathan",
+            "Slapshot",
+            "us"
+        ],
+        "name": "Tech'n'Cheats",
+        "topic": "Umbau-L\u00f6sungen, Anschluss-Probleme, Computerprobleme, Spielehilfen, Kaufberatung"
+    },
+    {
+        "closed": false,
+        "id": 6,
+        "lastMessage": "2018-11-17T19:44:00+01:00",
+        "mods": [
+            "Leviathan",
+            "Slapshot",
+            "Florian M."
+        ],
+        "name": "OT",
+        "topic": "Ohne Tiefgang - der t\u00e4gliche Schwachsinn"
+    },
+    {
+        "closed": false,
+        "id": 26,
+        "lastMessage": "2018-11-17T19:03:00+01:00",
+        "mods": [
+            "Leviathan",
+            "Slapshot",
+            "us"
+        ],
+        "name": "Filme & Serien",
+        "topic": "Alles wof\u00fcr 24 fps reichen"
+    },
+    {
+        "closed": false,
+        "id": 8,
+        "lastMessage": "2018-11-12T10:25:00+01:00",
+        "mods": [
+            "Mod-Team"
+        ],
+        "name": "Online-Gaming",
+        "topic": "Alles rund um Onlinespiele"
+    },
+    {
+        "closed": true,
+        "id": null,
+        "lastMessage": "2018-06-27T10:29:00+02:00",
+        "mods": [
+            "Slapshot",
+            "Leviathan"
+        ],
+        "name": "E3",
+        "topic": "12. bis 15. Juni"
+    },
+    {
+        "closed": true,
+        "id": null,
+        "lastMessage": "2016-07-14T16:29:00+02:00",
+        "mods": [
+            "Leviathan"
+        ],
+        "name": "EM",
+        "topic": "F\u00fcr den Fanclub von \"Die Mannschaft\""
+    },
+    {
+        "closed": true,
+        "id": null,
+        "lastMessage": "2018-07-24T20:38:00+02:00",
+        "mods": [
+            "Leviathan"
+        ],
+        "name": "WM",
+        "topic": "14. Juni bis 15. Juli"
+    }
+]
