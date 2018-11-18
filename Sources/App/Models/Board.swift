@@ -1,11 +1,13 @@
 //
-//  main.swift
+//  Board.swift
 //  mservice-cachewarmer
 //
 //  Copyright © 2018 Christopher Reitz. Licensed under the MIT license.
 //  See LICENSE file in the project root for full license information.
 //
 
-import App
+struct Board: Codable {
+    var id: Int?
+}
 
-try app(.detect()).run()
+typealias Boards = [Board]

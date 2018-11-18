@@ -1,3 +1,11 @@
+//
+//  app.swift
+//  mservice-cachewarmer
+//
+//  Copyright © 2018 Christopher Reitz. Licensed under the MIT license.
+//  See LICENSE file in the project root for full license information.
+//
+
 import Vapor
 
 /// Creates an instance of Application. This is called from main.swift in the run target.
@@ -8,5 +16,6 @@ public func app(_ env: Environment) throws -> Application {
     try configure(&config, &env, &services)
     let app = try Application(config: config, environment: env, services: services)
     try boot(app)
+    
     return app
 }

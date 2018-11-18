@@ -1,11 +1,13 @@
 //
-//  main.swift
+//  Thread.swift
 //  mservice-cachewarmer
 //
 //  Copyright © 2018 Christopher Reitz. Licensed under the MIT license.
 //  See LICENSE file in the project root for full license information.
 //
 
-import App
+struct Thread: Codable {
+    var id: Int
+}
 
-try app(.detect()).run()
+typealias Threads = [Thread]
