@@ -12,6 +12,12 @@ import Jobs
 /// Called after your application has initialized.
 public func boot(_ app: Application) throws {
 
+    var defaultInterval: Double = 130
+    if let enviromnentInterval = Environment.get("INTERVAL") {
+        defaultInterval = Double(enviromnentInterval) ?? defaultInterval
+    }
+
+    var jobIsRunning = false
     let log = try app.make(Logger.self)
     let httpClient = try app.client()
     let runInformationService = try app.make(RunInformationService.self)
@@ -22,7 +28,21 @@ public func boot(_ app: Application) throws {
                                          runInformationService: runInformationService,
                                          baseURL: "http://\(mserviceHost):\(mservicePort)")
 
-    Jobs.add(interval: .seconds(130)) {
-        cacheWarmer.run()
+    Jobs.add(interval: .seconds(defaultInterval)) {
+        guard !jobIsRunning else {
+            log.info("Skipping new run, because previous did not finished yet")
+            return
+        }
+
+        log.info("Starting new run - \(Date())")
+        jobIsRunning = true
+        cacheWarmer.run(didFinishBlock: { (duration) in
+            jobIsRunning = false
+            log.info("""
+            \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            finished job in \(duration) seconds
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
+            """)
+        })
     }
 }

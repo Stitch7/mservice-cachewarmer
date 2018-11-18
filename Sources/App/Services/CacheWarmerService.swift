@@ -14,7 +14,7 @@ final class CacheWarmerService {
 
     let log: Logger
     let httpClient: Client
-    let runInformationService: RunInformationService
+    let runInformationService: RunInformationServiceType
     let baseURL: String
     let fetchNumberOfThreads: Int
     let dispatchGroup = DispatchGroup()
@@ -23,7 +23,7 @@ final class CacheWarmerService {
 
     // MARK: - Initializers
 
-    init(log: Logger, httpClient: Client, runInformationService: RunInformationService, baseURL: String, fetchNumberOfThreads: Int = 20) {
+    init(log: Logger, httpClient: Client, runInformationService: RunInformationServiceType, baseURL: String, fetchNumberOfThreads: Int = 20) {
         self.log = log
         self.httpClient = httpClient
         self.runInformationService = runInformationService
@@ -35,11 +35,11 @@ final class CacheWarmerService {
 
     // MARK: - Public
 
-    public func run() {
+    func run(didFinishBlock: @escaping (Double) -> Void) {
         startTime = DispatchTime.now()
-        self.log.info("Starting new run - \(Date())")
 
-        for board in fetchBoards() {
+        let boards = fetchBoards()
+        for board in boards {
             guard let boardId = board.id else { continue }
             perform {
                 let threads = self.fetchThreads(boardId: boardId)
@@ -59,11 +59,7 @@ final class CacheWarmerService {
             let duration = Double(nanoTime) / 1_000_000_000
 
             self.runInformationService.update(duration: Int(duration))
-            self.log.info("""
-            \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            finished all requests in: \(duration) seconds
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
-            """)
+            didFinishBlock(duration)
         }
     }
 

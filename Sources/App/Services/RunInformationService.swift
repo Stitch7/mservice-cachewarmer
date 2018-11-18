@@ -8,18 +8,33 @@
 
 import Vapor
 
-final class RunInformationService: CustomStringConvertible, Service {
+protocol RunInformationServiceType: CustomStringConvertible, Service {
+    func update(duration: Int)
+}
+
+final class RunInformationService: RunInformationServiceType {
+
+    // MARK: - RunCounter container
+
+    struct RunCounter {
+        private(set) var numberOfRuns: UInt64 = 0
+
+        mutating func increment() {
+            if numberOfRuns < UInt64.max {
+                numberOfRuns += 1
+            }
+        }
+    }
 
     // MARK: - Properties
 
-    var lastRun: Date?
-    var lastRunDuration: Int?
+    private(set) var lastRun: Date?
+    private(set) var lastRunDuration: Int = -1
+    private(set) var runningSince = Date()
+    private(set) var longestRunDuration: Int = -1
+    private(set) var runCounter = RunCounter()
 
-    private var runningSince: Date
-    private var longestRunDuration: Int = 0
-    private var numberOfRuns: Int64 = 0
-
-    private var dateFormatter: DateFormatter = {
+    private(set) var dateFormatter: DateFormatter = {
         guard let timeZone = TimeZone(identifier: "Europe/Berlin") else {
             fatalError("TimeZone not found on System")
         }
@@ -31,19 +46,25 @@ final class RunInformationService: CustomStringConvertible, Service {
         return df
     }()
 
+    var runningSinceFormatted: String {
+        return dateFormatter.string(from: runningSince)
+    }
+
+    var lastRunFormatted: String {
+        return dateFormatter.string(from: lastRun ?? runningSince)
+    }
+
     // MARK: - CustomStringConvertible
 
     var description: String {
-        let runningSinceFormatted = dateFormatter.string(from: runningSince)
-        let lastRunFormatted = dateFormatter.string(from: lastRun ?? runningSince)
         let infos = [
             "m!service-cachewarmer runtime information",
             "-----------------------------------------",
-            "Running since \(runningSinceFormatted)",
+            "Running since: \(runningSinceFormatted)",
             "Last run: \(lastRunFormatted)",
-            "Last duration: \(lastRunDuration ?? -1) seconds",
-            "Longest duration: \(longestRunDuration) seconds",
-            "Total number of runs: \(numberOfRuns)"
+            "Last duration: \(lastRunDuration) sec",
+            "Longest duration: \(longestRunDuration) sec",
+            "Total number of runs: \(runCounter.numberOfRuns)"
         ]
 
         return infos.joined(separator: "\n")
@@ -51,8 +72,10 @@ final class RunInformationService: CustomStringConvertible, Service {
 
     // MARK: - Initializers
 
-    init() {
-        runningSince = Date()
+    init() { }
+
+    init(runCounter: RunCounter) {
+        self.runCounter = runCounter
     }
 
     // MARK: - Public
@@ -60,9 +83,7 @@ final class RunInformationService: CustomStringConvertible, Service {
     func update(duration: Int) {
         lastRun = Date()
         lastRunDuration = duration
-        if numberOfRuns < Int64.max {
-            numberOfRuns += 1
-        }
+        runCounter.increment()
         if duration > longestRunDuration {
             longestRunDuration = duration
         }
