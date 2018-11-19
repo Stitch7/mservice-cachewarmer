@@ -36,13 +36,8 @@ public func boot(_ app: Application) throws {
 
         log.info("Starting new run - \(Date())")
         jobIsRunning = true
-        cacheWarmer.run(didFinishBlock: { (duration) in
+        cacheWarmer.run { duration in
             jobIsRunning = false
-            log.info("""
-            \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            finished job in \(duration) seconds
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
-            """)
-        })
+        }
     }
 }

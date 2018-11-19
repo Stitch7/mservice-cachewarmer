@@ -38,8 +38,7 @@ final class CacheWarmerService {
     func run(didFinishBlock: @escaping (Double) -> Void) {
         startTime = DispatchTime.now()
 
-        let boards = fetchBoards()
-        for board in boards {
+        for board in fetchBoards() {
             guard let boardId = board.id else { continue }
             perform {
                 let threads = self.fetchThreads(boardId: boardId)
@@ -59,6 +58,11 @@ final class CacheWarmerService {
             let duration = Double(nanoTime) / 1_000_000_000
 
             self.runInformationService.update(duration: Int(duration))
+            self.log.info("""
+            \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            finished job in \(duration) seconds
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
+            """)
             didFinishBlock(duration)
         }
     }
