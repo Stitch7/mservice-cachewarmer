@@ -23,7 +23,12 @@ final class CacheWarmerService {
 
     // MARK: - Initializers
 
-    init(log: Logger, httpClient: Client, runInformationService: RunInformationServiceType, baseURL: String, fetchNumberOfThreads: Int = 20) {
+    init(log: Logger,
+         httpClient: Client,
+         runInformationService: RunInformationServiceType,
+         baseURL: String,
+         fetchNumberOfThreads: Int = 20
+    ) {
         self.log = log
         self.httpClient = httpClient
         self.runInformationService = runInformationService

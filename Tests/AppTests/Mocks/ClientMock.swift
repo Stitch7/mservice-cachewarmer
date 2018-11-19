@@ -19,7 +19,9 @@ class ClientMock: Client {
     // MARK: - Initializers
 
     init() {
+        // swiftlint:disable force_try
         container = try! Application()
+        // swiftlint:enable force_try
     }
 
     // MARK: - Client

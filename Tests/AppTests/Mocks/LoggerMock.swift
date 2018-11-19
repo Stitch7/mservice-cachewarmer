@@ -12,5 +12,6 @@ class LoggerMock: Logger {
 
     // MARK: - Logger
 
+    // swiftlint:disable function_parameter_count
     func log(_ string: String, at level: LogLevel, file: String, function: String, line: UInt, column: UInt) { }
 }

@@ -39,10 +39,10 @@ final class RunInformationService: RunInformationServiceType {
             fatalError("TimeZone not found on System")
         }
 
-        let df = DateFormatter()
-        df.dateFormat = "dd.MM.yy, HH:mm"
-        df.timeZone = timeZone
-        return df
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yy, HH:mm"
+        dateFormatter.timeZone = timeZone
+        return dateFormatter
     }()
 
     var runningSinceFormatted: String {
@@ -66,7 +66,7 @@ final class RunInformationService: RunInformationServiceType {
             "| Last duration        | \(pad((String(lastRunDuration) + " sec"))) |",
             "| Longest duration     | \(pad((String(longestRunDuration) + " sec"))) |",
             "| Total number of runs | \(pad(String(runCounter.numberOfRuns))) |",
-            "·---------------------------------------------·",
+            "·---------------------------------------------·"
         ]
 
         return infos.joined(separator: "\n")

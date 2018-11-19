@@ -36,7 +36,7 @@ public func boot(_ app: Application) throws {
 
         log.info("Starting new run - \(Date())")
         jobIsRunning = true
-        cacheWarmer.run { duration in
+        cacheWarmer.run { _ in
             jobIsRunning = false
         }
     }

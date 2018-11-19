@@ -26,14 +26,20 @@ final class RunInformationServiceTests: XCTestCase {
     func testFirstUpdate() throws {
         service.update(duration: testDuration)
 
-        assertDescription(for: service, lastRunDuration: testDuration, longestRunDuration: testDuration, numberOfRuns: 1)
+        assertDescription(for: service,
+                          lastRunDuration: testDuration,
+                          longestRunDuration: testDuration,
+                          numberOfRuns: 1)
     }
 
     func testSecondUpdateWithHigherDuration() throws {
         service.update(duration: testDuration)
         service.update(duration: higherTestDuration)
 
-        assertDescription(for: service, lastRunDuration: higherTestDuration, longestRunDuration: higherTestDuration, numberOfRuns: 2)
+        assertDescription(for: service,
+                          lastRunDuration: higherTestDuration,
+                          longestRunDuration: higherTestDuration,
+                          numberOfRuns: 2)
     }
 
     func testThirdUpdateWithLowerDuration() throws {
@@ -41,19 +47,29 @@ final class RunInformationServiceTests: XCTestCase {
         service.update(duration: higherTestDuration)
         service.update(duration: testDuration)
 
-        assertDescription(for: service, lastRunDuration: testDuration, longestRunDuration: higherTestDuration, numberOfRuns: 3)
+        assertDescription(for: service,
+                          lastRunDuration: testDuration,
+                          longestRunDuration: higherTestDuration,
+                          numberOfRuns: 3)
     }
 
     func testDontOverflowMaxRuns() throws {
         let service = RunInformationService(runCounter: RunInformationService.RunCounter(numberOfRuns: UInt64.max))
         service.update(duration: testDuration)
 
-        assertDescription(for: service, lastRunDuration: testDuration, longestRunDuration: testDuration, numberOfRuns: UInt64.max)
+        assertDescription(for: service,
+                          lastRunDuration: testDuration,
+                          longestRunDuration: testDuration,
+                          numberOfRuns: UInt64.max)
     }
 
     // MARK: - Helper
 
-    private func assertDescription(for service: RunInformationService, lastRunDuration: Int, longestRunDuration: Int, numberOfRuns: UInt64) {
+    private func assertDescription(for service: RunInformationService,
+                                   lastRunDuration: Int,
+                                   longestRunDuration: Int,
+                                   numberOfRuns: UInt64
+    ) {
         let serviceDesc = service.description
         XCTAssertTrue(serviceDesc.range(of: "Running since        | \(service.runningSinceFormatted)") != nil)
         XCTAssertTrue(serviceDesc.range(of: "Last run             | \(service.lastRunFormatted)") != nil)
@@ -66,6 +82,6 @@ final class RunInformationServiceTests: XCTestCase {
         ("testInitialState", testInitialState),
         ("testFirstUpdate", testFirstUpdate),
         ("testThirdUpdateWithLowerDuration", testThirdUpdateWithLowerDuration),
-        ("testDontOverflowMaxRuns", testDontOverflowMaxRuns),
+        ("testDontOverflowMaxRuns", testDontOverflowMaxRuns)
     ]
 }

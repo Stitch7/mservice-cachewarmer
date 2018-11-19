@@ -11,10 +11,10 @@ matrix:
 
 before_install:
   - brew update
-#  - brew upgrade swiftlint
+  - brew upgrade swiftlint
   - brew install vapor/tap/vapor
 
 script:
   - swift build
-#  - swiftlint --strict
+  - swiftlint --strict
   - swift test

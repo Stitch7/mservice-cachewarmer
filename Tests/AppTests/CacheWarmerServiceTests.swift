@@ -27,7 +27,7 @@ final class CacheWarmerServiceTests: XCTestCase {
                                          httpClient: client,
                                          runInformationService: runInformationService,
                                          baseURL: "")
-        service.run { (duration) in
+        service.run { _ in
             didFinishExpectation.fulfill()
         }
 
