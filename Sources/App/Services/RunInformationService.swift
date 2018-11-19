@@ -40,8 +40,7 @@ final class RunInformationService: RunInformationServiceType {
         }
 
         let df = DateFormatter()
-        df.dateStyle = .short
-        df.timeStyle = .short
+        df.dateFormat = "dd.MM.yy, HH:mm"
         df.timeZone = timeZone
         return df
     }()
@@ -57,14 +56,17 @@ final class RunInformationService: RunInformationServiceType {
     // MARK: - CustomStringConvertible
 
     var description: String {
+        let pad: (String) -> String = { $0.padding(toLength: 20, withPad: " ", startingAt: 0) }
         let infos = [
-            "m!service-cachewarmer runtime information",
-            "-----------------------------------------",
-            "Running since: \(runningSinceFormatted)",
-            "Last run: \(lastRunFormatted)",
-            "Last duration: \(lastRunDuration) sec",
-            "Longest duration: \(longestRunDuration) sec",
-            "Total number of runs: \(runCounter.numberOfRuns)"
+            ".---------------------------------------------.",
+            "| m!service cachewarmer runtime information   |",
+            "|---------------------------------------------|",
+            "| Running since        | \(pad(runningSinceFormatted)) |",
+            "| Last run             | \(pad(lastRunFormatted)) |",
+            "| Last duration        | \(pad((String(lastRunDuration) + " sec"))) |",
+            "| Longest duration     | \(pad((String(longestRunDuration) + " sec"))) |",
+            "| Total number of runs | \(pad(String(runCounter.numberOfRuns))) |",
+            "·---------------------------------------------·",
         ]
 
         return infos.joined(separator: "\n")

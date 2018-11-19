@@ -55,11 +55,11 @@ final class RunInformationServiceTests: XCTestCase {
 
     private func assertDescription(for service: RunInformationService, lastRunDuration: Int, longestRunDuration: Int, numberOfRuns: UInt64) {
         let serviceDesc = service.description
-        XCTAssertTrue(serviceDesc.range(of: "Running since: \(service.runningSinceFormatted)") != nil)
-        XCTAssertTrue(serviceDesc.range(of: "Last run: \(service.lastRunFormatted)") != nil)
-        XCTAssertTrue(serviceDesc.range(of: "Last duration: \(lastRunDuration)") != nil)
-        XCTAssertTrue(serviceDesc.range(of: "Longest duration: \(longestRunDuration)") != nil)
-        XCTAssertTrue(serviceDesc.range(of: "Total number of runs: \(numberOfRuns)") != nil)
+        XCTAssertTrue(serviceDesc.range(of: "Running since        | \(service.runningSinceFormatted)") != nil)
+        XCTAssertTrue(serviceDesc.range(of: "Last run             | \(service.lastRunFormatted)") != nil)
+        XCTAssertTrue(serviceDesc.range(of: "Last duration        | \(lastRunDuration)") != nil)
+        XCTAssertTrue(serviceDesc.range(of: "Longest duration     | \(longestRunDuration)") != nil)
+        XCTAssertTrue(serviceDesc.range(of: "Total number of runs | \(numberOfRuns)") != nil)
     }
 
     static let allTests = [
