@@ -27,7 +27,7 @@ class ClientMock: Client {
     var container: Container
 
     func send(_ req: Request) -> EventLoopFuture<Response> {
-        let jsonString = readTestJsonFile(for: req.http.urlString)
+        let jsonString = testJson(for: req.http.urlString)
 
         let response = Response(using: container)
         response.http.headers = ["Content-Type": "application/json; charset=utf-8"]
@@ -41,27 +41,22 @@ class ClientMock: Client {
 
     // MARK: - Helper
 
-    func readTestJsonFile(for urlString: String) -> String {
+    func testJson(for urlString: String) -> String {
         var jsonString: String
         switch true {
         case urlString == "/boards":
-            jsonString = readTestJsonFile(name: "boards")
+            jsonString = boardsJSON
             boardsRouteCalled += 1
         case urlString.hasSuffix("/threads"):
-            jsonString = readTestJsonFile(name: "threads")
+            jsonString = threadsJSON
             threadsRouteCalled += 1
         case urlString.hasPrefix("/board/"):
-            jsonString = readTestJsonFile(name: "messages")
+            jsonString = messagesJSON
             messagesRouteCalled += 1
         default:
             fatalError("Uncovered url occured")
         }
 
         return jsonString
-    }
-
-    func readTestJsonFile(name: String) -> String {
-        let filepath = Bundle(for: ClientMock.self).path(forResource: name, ofType: "json")!
-        return try! String(contentsOfFile: filepath)
     }
 }
