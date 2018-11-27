@@ -13,35 +13,92 @@ final class CacheWarmerServiceTests: XCTestCase {
 
     // MARK: - Reused initializations
 
-    let client = ClientMock()
     let logger = LoggerMock()
+    let client = ClientMock()
     let runInformationService = RunInformationServiceMock()
     let testBoardsCount = 6
 
     // MARK: - Test cases
 
-    func test() throws {
+    func testFullRun() throws {
         let didFinishExpectation = expectation(description: "CacheWarmerServiceRunDidFinish")
 
+        let nightWatchmanService = NightWatchmanServiceMock(shouldAllow: true)
         let service = CacheWarmerService(log: logger,
                                          httpClient: client,
                                          runInformationService: runInformationService,
+                                         nightWatchmanService: nightWatchmanService,
                                          baseURL: "")
-        service.run { _ in
+        service.run { succeed, duration in
+            XCTAssertTrue(succeed)
+            XCTAssertNotNil(duration)
             didFinishExpectation.fulfill()
         }
 
         waitForExpectations(timeout: 3)
 
         XCTAssertEqual(runInformationService.updateCalled, 1)
+        XCTAssertEqual(nightWatchmanService.entranceAllowedCalled, 1)
         XCTAssertEqual(client.boardsRouteCalled, 1)
         XCTAssertEqual(client.threadsRouteCalled, testBoardsCount)
         XCTAssertEqual(client.messagesRouteCalled, testBoardsCount * service.fetchNumberOfThreads)
     }
 
-    // MARK: - Helper<
+    func testDontRunDuringNightTime() throws {
+        let didFinishExpectation = expectation(description: "CacheWarmerServiceRunDidFinish")
+
+        let nightWatchmanService = NightWatchmanServiceMock(shouldAllow: false)
+        let service = CacheWarmerService(log: logger,
+                                         httpClient: client,
+                                         runInformationService: runInformationService,
+                                         nightWatchmanService: nightWatchmanService,
+                                         baseURL: "")
+        service.run { succeed, _ in
+            XCTAssertFalse(succeed)
+            didFinishExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 3)
+
+        XCTAssertEqual(runInformationService.updateCalled, 0)
+        XCTAssertEqual(nightWatchmanService.entranceAllowedCalled, 1)
+        XCTAssertEqual(client.boardsRouteCalled, 0)
+        XCTAssertEqual(client.threadsRouteCalled, 0)
+        XCTAssertEqual(client.messagesRouteCalled, 0)
+    }
+
+    func testDontRunTwice() throws {
+        let didFinishExpectation = expectation(description: "CacheWarmerServiceRunDidFinish")
+
+        let nightWatchmanService = NightWatchmanServiceMock(shouldAllow: true)
+        let service = CacheWarmerService(log: logger,
+                                         httpClient: client,
+                                         runInformationService: runInformationService,
+                                         nightWatchmanService: nightWatchmanService,
+                                         baseURL: "")
+        service.run { succeed, _ in
+            XCTAssertTrue(succeed)
+
+            service.run { succeed, _ in
+                XCTAssertFalse(succeed)
+                didFinishExpectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 3)
+
+        XCTAssertEqual(runInformationService.updateCalled, 1)
+        XCTAssertEqual(nightWatchmanService.entranceAllowedCalled, 2)
+        XCTAssertEqual(client.boardsRouteCalled, 1)
+        XCTAssertEqual(client.threadsRouteCalled, testBoardsCount)
+        XCTAssertEqual(client.messagesRouteCalled, testBoardsCount * service.fetchNumberOfThreads)
+    }
+
+    // MARK: - Helper
 
     static let allTests = [
-        ("test", test)
+        ("testFullRun", testFullRun),
+        ("testDontRunDuringNightTime", testDontRunDuringNightTime),
+        ("testDontRunTwice", testDontRunTwice)
     ]
 }

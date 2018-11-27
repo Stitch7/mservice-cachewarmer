@@ -12,18 +12,19 @@ import XCTest
 final class RunInformationServiceTests: XCTestCase {
 
     // MARK: - Reused initializations
-
-    let service = RunInformationService()
     let testDuration = 23
     let higherTestDuration = 42
+    let timeZone = TimeZone(identifier: "Europe/Berlin")!
 
     // MARK: - Test cases
 
     func testInitialState() throws {
+        let service = RunInformationService(timeZone: timeZone)
         assertDescription(for: service, lastRunDuration: -1, longestRunDuration: -1, numberOfRuns: 0)
     }
 
     func testFirstUpdate() throws {
+        let service = RunInformationService(timeZone: timeZone)
         service.update(duration: testDuration)
 
         assertDescription(for: service,
@@ -33,6 +34,7 @@ final class RunInformationServiceTests: XCTestCase {
     }
 
     func testSecondUpdateWithHigherDuration() throws {
+        let service = RunInformationService(timeZone: timeZone)
         service.update(duration: testDuration)
         service.update(duration: higherTestDuration)
 
@@ -43,6 +45,7 @@ final class RunInformationServiceTests: XCTestCase {
     }
 
     func testThirdUpdateWithLowerDuration() throws {
+        let service = RunInformationService(timeZone: timeZone)
         service.update(duration: testDuration)
         service.update(duration: higherTestDuration)
         service.update(duration: testDuration)
@@ -54,7 +57,8 @@ final class RunInformationServiceTests: XCTestCase {
     }
 
     func testDontOverflowMaxRuns() throws {
-        let service = RunInformationService(runCounter: RunInformationService.RunCounter(numberOfRuns: UInt64.max))
+        let nearlyOverflowedRunCounter = RunInformationService.RunCounter(numberOfRuns: UInt64.max)
+        let service = RunInformationService(timeZone: timeZone, runCounter: nearlyOverflowedRunCounter)
         service.update(duration: testDuration)
 
         assertDescription(for: service,

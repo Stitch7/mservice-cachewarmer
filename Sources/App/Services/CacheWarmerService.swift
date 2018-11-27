@@ -15,10 +15,12 @@ final class CacheWarmerService {
     let log: Logger
     let httpClient: Client
     let runInformationService: RunInformationServiceType
+    let nightWatchmanService: NightWatchmanServiceType
     let baseURL: String
     let fetchNumberOfThreads: Int
     let dispatchGroup = DispatchGroup()
     let queue = DispatchQueue(label: "CacheWarmerQueue", qos: .background)
+    var jobIsRunning = false
     var startTime = DispatchTime.now()
 
     // MARK: - Initializers
@@ -26,12 +28,14 @@ final class CacheWarmerService {
     init(log: Logger,
          httpClient: Client,
          runInformationService: RunInformationServiceType,
+         nightWatchmanService: NightWatchmanServiceType,
          baseURL: String,
          fetchNumberOfThreads: Int = 20
     ) {
         self.log = log
         self.httpClient = httpClient
         self.runInformationService = runInformationService
+        self.nightWatchmanService = nightWatchmanService
         self.baseURL = baseURL
         self.fetchNumberOfThreads = fetchNumberOfThreads
 
@@ -40,8 +44,22 @@ final class CacheWarmerService {
 
     // MARK: - Public
 
-    func run(didFinishBlock: @escaping (Double) -> Void) {
+    func run(didFinishBlock: ((Bool, Double?) -> Void)? = nil) {
+        let startDate = Date()
+        guard nightWatchmanService.entranceAllowed(on: startDate) else {
+            log.info("🌝 Skipping run, it's night time")
+            didFinishBlock?(false, nil)
+            return
+        }
+        guard !jobIsRunning else {
+            log.info("🏁 Skipping run, because previous did not finish yet")
+            didFinishBlock?(false, nil)
+            return
+        }
+
+        jobIsRunning = true
         startTime = DispatchTime.now()
+        log.info("🚀 Starting new run - \(startDate)")
 
         for board in fetchBoards() {
             guard let boardId = board.id else { continue }
@@ -61,14 +79,14 @@ final class CacheWarmerService {
             let endTime = DispatchTime.now()
             let nanoTime = endTime.uptimeNanoseconds - self.startTime.uptimeNanoseconds
             let duration = Double(nanoTime) / 1_000_000_000
-
+            didFinishBlock?(true, duration)
             self.runInformationService.update(duration: Int(duration))
             self.log.info("""
             \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            finished job in \(duration) seconds
+            ✅ finished job in \(duration) seconds
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n
             """)
-            didFinishBlock(duration)
+            self.jobIsRunning = false
         }
     }
 
@@ -83,7 +101,7 @@ final class CacheWarmerService {
     }
 
     private func fetch(_ route: String) throws -> EventLoopFuture<Response> {
-        log.info("fetching \(route)")
+        log.info("📦 fetching \(route)")
         return self.httpClient.get("\(baseURL)\(route)", headers: ["user-agent": "m!service-cachewarmer"])
     }
 

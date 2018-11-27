@@ -28,6 +28,8 @@ final class RunInformationService: RunInformationServiceType {
 
     // MARK: - Properties
 
+    private(set) var timeZone: TimeZone
+
     private(set) var lastRun: Date?
     private(set) var lastRunDuration: Int = -1
     private(set) var runningSince = Date()
@@ -74,9 +76,12 @@ final class RunInformationService: RunInformationServiceType {
 
     // MARK: - Initializers
 
-    init() { }
+    init(timeZone: TimeZone) {
+        self.timeZone = timeZone
+    }
 
-    init(runCounter: RunCounter) {
+    init(timeZone: TimeZone, runCounter: RunCounter) {
+        self.timeZone = timeZone
         self.runCounter = runCounter
     }
 

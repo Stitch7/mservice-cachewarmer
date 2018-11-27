@@ -11,10 +11,13 @@ matrix:
 
 before_install:
   - brew update
-  - brew install swiftlint
+  - brew upgrade swiftlint
   - brew install vapor/tap/vapor
 
 script:
   - swift build
   - swiftlint --strict
   - swift test
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -J 'mservice-cachewarmer'
